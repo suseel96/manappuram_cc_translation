@@ -186,15 +186,32 @@ def load_css(file_name="static/style.css"):
 
 load_css()
 
-def download_video(video_url):
+# def download_video(video_url):
+#     ydl_opts = {
+#         "format": "best",
+#         "outtmpl": "input_video.%(ext)s",
+#     }
+#     with YoutubeDL(ydl_opts) as ydl:
+#         result = ydl.extract_info(video_url, download=True)
+#         return ydl.prepare_filename(result)
+
+cookie_file = "cookies.txt"
+
+def download_video(video_url, cookie_file=None, proxy=None):
     ydl_opts = {
         "format": "best",
         "outtmpl": "input_video.%(ext)s",
+        "noplaylist": True,  # Prevents downloading entire playlists if the URL is part of one
+        "nocheckcertificate": True,  # Avoid certificate errors
     }
+
+    # Add cookies if provided
+    if cookie_file:
+        ydl_opts["cookiefile"] = cookie_file
+
     with YoutubeDL(ydl_opts) as ydl:
         result = ydl.extract_info(video_url, download=True)
         return ydl.prepare_filename(result)
-
 
 def extract_audio(video_file):
     audio_file = "input_audio.mp3"
@@ -329,7 +346,7 @@ def main():
             for file in final_files_to_del:
                 os.remove(os.path.join(os.getcwd(), file))
             with st.spinner("Downloading video..."):
-                video_file = download_video(video_url)
+                video_file = download_video(video_url, cookie_file=cookie_file)
 
             st.success("Video downloaded successfully!")
 
