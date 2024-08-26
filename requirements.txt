@@ -1,0 +1,7 @@
+streamlit
+yt-dlp
+moviepy
+openai-whisper
+ffmpeg-python
+deep-translator
+numpy==1.24.1
