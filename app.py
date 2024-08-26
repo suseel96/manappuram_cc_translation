@@ -297,7 +297,7 @@ def translate_srt(srt_file, dest_language, output_file="translated_srt.srt"):
 
 
 def embed_subtitles(video_input, subtitle_input, output_video="final_video.mp4"):
-    subtitle_filter = f"subtitles={subtitle_input}"
+    subtitle_filter = f"subtitles={subtitle_input}:force_style='FontName=Arial'"
     ffmpeg.input(video_input).output(output_video, vf=subtitle_filter).run()
     return output_video
 
