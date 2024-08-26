@@ -227,7 +227,7 @@ def generate_subtitles(audio_file, model_name="base"):
 
 
 def save_transcript_to_srt(segments, output_srt="input_srt.srt"):
-    with open(output_srt, "w") as srt_file:
+    with open(output_srt, "w", encoding="utf-8") as srt_file:
         for i, segment in enumerate(segments):
             start_time = segment["start"]
             end_time = segment["end"]
@@ -263,7 +263,7 @@ def translate_text(text, dest_language):
 
 
 def read_srt_file(srt_file):
-    with open(srt_file, "r") as file:
+    with open(srt_file, "r", encoding="utf-8") as file:
         content = file.read()
 
     subtitles = re.split(r"\n\n", content)
