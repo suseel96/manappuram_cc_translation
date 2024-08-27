@@ -118,25 +118,6 @@ def translate_srt(srt_file, dest_language, output_file="translated_srt.srt"):
     with open(output_file, "w", encoding="utf-8") as file:
         file.write("\n".join(translated_subtitles))
 
-
-# def embed_subtitles(video_input, subtitle_input, output_video="final_video.mp4"):
-#     subtitle_filter = f"subtitles={subtitle_input}"
-#     ffmpeg.input(video_input).output(output_video, vf=subtitle_filter).run()
-#     return output_video
-
-
-def embed_subtitles(
-    video_input,
-    subtitle_input,
-    output_video="final_video.mp4",
-    font_path="SakalBharati_N_Ship.ttf",
-):
-    # The subtitles filter with custom font
-    subtitle_filter = f"subtitles={subtitle_input}:force_style='FontName={font_path}'"
-    ffmpeg.input(video_input).output(output_video, vf=subtitle_filter).run()
-    return output_video
-
-
 def process_subtitles(audio_file, srt_file):
     segments = generate_subtitles(audio_file)
     save_transcript_to_srt(segments, srt_file)
@@ -224,12 +205,7 @@ def main():
 
             st.success("Subtitles generated and translated successfully!")
 
-            with st.spinner("Embedding subtitles into video..."):
-                output_video = embed_subtitles(video_file, translated_srt_file)
-
-            st.success(f"Subtitles embedded successfully!")
-
-            st.video(output_video)
+            st.video('input_video.mp4', subtitles='translated_srt.srt')
         else:
             st.error("Please provide a valid video URL and destination language.")
 
