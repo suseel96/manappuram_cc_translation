@@ -107,16 +107,43 @@ def read_srt_file(srt_file):
     return parsed_subtitles
 
 
+# def translate_srt(srt_file, dest_language, output_file="translated_srt.srt"):
+#     subtitles = read_srt_file(srt_file)
+
+#     translated_subtitles = []
+#     for index, timing, text in subtitles:
+#         translated_text = translate_text(text, dest_language)
+#         translated_subtitles.append(f"{index}\n{timing}\n{translated_text}\n")
+
+#     with open(output_file, "w", encoding="utf-8") as file:
+#         file.write("\n".join(translated_subtitles))
+
+
+def translate_chunk(index, timing, text, dest_language):
+    return f"{index}\n{timing}\n{translate_text(text, dest_language)}\n"
+
+
 def translate_srt(srt_file, dest_language, output_file="translated_srt.srt"):
     subtitles = read_srt_file(srt_file)
 
-    translated_subtitles = []
-    for index, timing, text in subtitles:
-        translated_text = translate_text(text, dest_language)
-        translated_subtitles.append(f"{index}\n{timing}\n{translated_text}\n")
+    with concurrent.futures.ThreadPoolExecutor() as executor:
+        future_to_subtitle = {
+            executor.submit(translate_chunk, index, timing, text, dest_language): (
+                index,
+                timing,
+                text,
+            )
+            for index, timing, text in subtitles
+        }
+
+        translated_subtitles = []
+        for future in concurrent.futures.as_completed(future_to_subtitle):
+            translated_subtitle = future.result()
+            translated_subtitles.append(translated_subtitle)
 
     with open(output_file, "w", encoding="utf-8") as file:
         file.write("\n".join(translated_subtitles))
+
 
 def process_subtitles(audio_file, srt_file):
     segments = generate_subtitles(audio_file)
